@@ -1,0 +1,121 @@
+/* Все значения — токены дизайн-системы ИВС-СЕТИ (globals.css). */
+
+.page {
+  max-width: 1360px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: var(--space-32) var(--space-48) var(--space-80);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+/* h1: 48/54, 700, -0.02em */
+.title {
+  margin: var(--space-120) 0 var(--space-48);
+  font: 700 48px/54px var(--font-sans);
+  letter-spacing: -0.02em;
+}
+
+.grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-24);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  border-radius: var(--radius-20);
+}
+
+.card:active .shot {
+  transform: scale(0.99);
+  transition-duration: var(--duration-press);
+}
+
+.shot {
+  display: block;
+  aspect-ratio: 16 / 10;
+  border-radius: var(--radius-20);
+  overflow: hidden;
+  background: var(--surface-200);
+  /* тонкая рамка — светлые превью не сливаются с белой страницей */
+  box-shadow: 0 0 0 1px #e9e7e7;
+  transition:
+    transform var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+
+.shot img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: top;
+}
+
+.placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  font: 400 14px/20px var(--font-sans);
+  color: var(--text-muted);
+}
+
+/* h3: 24/32, 600 */
+.name {
+  margin-top: var(--space-24);
+  font: 600 24px/32px var(--font-sans);
+}
+
+/* body: 17/26, text-muted */
+.comment {
+  margin-top: var(--space-8);
+  font: 400 17px/26px var(--font-sans);
+  color: var(--text-muted);
+}
+
+.empty {
+  color: var(--line-strong);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card:hover .shot {
+    transform: translateY(-4px);
+    box-shadow: 0 0 0 1px #e9e7e7, var(--shadow-2);
+  }
+}
+
+@media (max-width: 960px) {
+  .page {
+    padding: var(--space-16) var(--space-16) var(--space-80);
+  }
+  .title {
+    margin: var(--space-48) 0 var(--space-32);
+    font-size: 32px;
+    line-height: 40px;
+  }
+  .grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-48);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card:hover .shot,
+  .card:active .shot {
+    transform: none;
+  }
+}

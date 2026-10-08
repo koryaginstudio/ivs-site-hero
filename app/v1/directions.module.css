@@ -1,0 +1,281 @@
+/* Карточки направлений — сразу под красным главным экраном, как его продолжение.
+   Сетка 3 × 2, все карточки одного размера. При наведении карточка раскрывается вниз
+   поверх следующего ряда — раскладка страницы не меняется. Токены ДС ИВС-СЕТИ. */
+
+.section {
+  --row: 120px; /* высота свёрнутой карточки = высота ряда */
+  background: var(--surface-100);
+  padding: var(--space-24) 0 var(--space-80);
+}
+
+/* место под раскрытие (--reserve считает JS) — только там, где карточки раскрываются по наведению */
+@media (hover: hover) and (pointer: fine) {
+  .section {
+    padding-bottom: calc(var(--reserve, 0px) + var(--space-48));
+  }
+}
+
+/* те же поля, что у главного экрана — края совпадают */
+.inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 clamp(16px, 4vw, 56px);
+}
+
+.bento {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: var(--row);
+  gap: var(--space-16);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cell {
+  position: relative;
+  z-index: 1;
+}
+
+/* раскрытая карточка — над соседями */
+.cell:hover,
+.cell:focus-within {
+  z-index: 5;
+}
+
+.card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-20);
+  background: var(--surface-200);
+  color: var(--Dark_text_elements);
+  text-decoration: none;
+  overflow: hidden;
+  /* тень — прямо на карточке: появляется сразу и одинаково у всех */
+  box-shadow: 0 0 0 rgba(31, 30, 30, 0);
+  transition:
+    box-shadow var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-soft);
+}
+
+.card:active {
+  transform: scale(0.99);
+  transition-duration: var(--duration-press);
+}
+
+.head {
+  flex: none;
+  height: var(--row);
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+  padding: 0 var(--space-24);
+}
+
+/* иконка: красная линия на белой подложке; карточка radius-20 / отступ 24 → внутри не круглее radius-8 */
+.icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-8);
+  background: var(--surface-100);
+  color: var(--red_main);
+  box-shadow: var(--shadow-1);
+  transition:
+    background-color var(--duration-fast) var(--ease-soft),
+    color var(--duration-fast) var(--ease-soft);
+}
+
+.icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.cardTitle {
+  flex: 1;
+  font: 600 17px/24px var(--font-sans);
+  text-wrap: balance;
+}
+
+.arrow {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  color: var(--red_main);
+  transition:
+    transform var(--duration-base) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-soft),
+    color var(--duration-fast) var(--ease-soft);
+}
+
+/* --- Раскрывающаяся часть: высота 0fr → 1fr (анимируется только эта карточка, сетка не двигается) --- */
+
+.details {
+  display: grid;
+  grid-template-rows: 0fr;
+  /* закрытие быстрее открытия */
+  transition: grid-template-rows 220ms var(--ease-out);
+}
+
+.detailsInner {
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  padding: 0 var(--space-24) 0 calc(var(--space-24) + 48px + var(--space-16));
+}
+
+.detailsInner > :last-child {
+  margin-bottom: var(--space-24);
+}
+
+.items {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--line);
+}
+
+.item {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  font: 400 15px/22px var(--font-sans);
+  color: var(--text-muted);
+  opacity: 0;
+  transform: translateY(-6px);
+  transition:
+    opacity 120ms var(--ease-out),
+    transform 120ms var(--ease-out);
+}
+
+.more {
+  display: inline-flex;
+  gap: 4px;
+  font: 500 15px/22px var(--font-sans);
+  color: var(--red_main);
+  opacity: 0;
+  transition: opacity 120ms var(--ease-out);
+}
+
+/* раскрытие: наведение мышью или фокус с клавиатуры */
+.cell:focus-within .card {
+  background: var(--surface-100);
+  box-shadow: var(--shadow-3);
+}
+
+.cell:focus-within .details {
+  grid-template-rows: 1fr;
+  transition-duration: 340ms;
+}
+
+.cell:focus-within .item,
+.cell:focus-within .more {
+  opacity: 1;
+  transform: none;
+  transition-duration: 260ms;
+  transition-delay: calc(80ms + var(--j, 0) * 40ms);
+}
+
+.cell:focus-within .icon {
+  background: var(--red_main);
+  color: var(--white_text_elements);
+}
+
+/* --- Появление при прокрутке (только если JS включил data-motion) --- */
+
+.section[data-motion] [data-reveal] {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 500ms var(--ease-out),
+    transform 500ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 60ms);
+}
+
+.section[data-motion] [data-reveal][data-visible="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+/* --- Hover — только мышь --- */
+
+@media (hover: hover) and (pointer: fine) {
+  .cell:hover .card {
+    background: var(--surface-100);
+    box-shadow: var(--shadow-3);
+  }
+  .cell:hover .details {
+    grid-template-rows: 1fr;
+    transition-duration: 340ms;
+  }
+  .cell:hover .item,
+  .cell:hover .more {
+    opacity: 1;
+    transform: none;
+    transition-duration: 260ms;
+    transition-delay: calc(80ms + var(--j, 0) * 40ms);
+  }
+  .cell:hover .icon {
+    background: var(--red_main);
+    color: var(--white_text_elements);
+  }
+  .cell:hover .arrow {
+    transform: rotate(90deg);
+    background: var(--red_main);
+    color: var(--white_text_elements);
+  }
+  .item {
+    transition-property: opacity, transform, color;
+  }
+}
+
+/* --- Адаптив --- */
+
+@media (max-width: 940px) {
+  .bento {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* телефон: без раскрытия (нет наведения) — компактные карточки-ссылки */
+@media (max-width: 640px) {
+  .section {
+    --row: 88px;
+    padding: var(--space-16) 0 var(--space-80);
+  }
+  .bento {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+  .head {
+    padding: 0 var(--space-16);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section[data-motion] [data-reveal] {
+    transform: none;
+    transition: opacity 200ms linear;
+    transition-delay: 0ms;
+  }
+  .card,
+  .details,
+  .item,
+  .more {
+    transition-duration: 0ms !important;
+    transition-delay: 0ms !important;
+  }
+  .card:active,
+  .cell:hover .arrow {
+    transform: none;
+  }
+}

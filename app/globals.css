@@ -1,0 +1,131 @@
+/* Токены — из дизайн-системы «ИВС-СЕТИ» (tokens.css). Значения не менять вручную. */
+:root {
+  --Dark_text_elements: #1f1e1e;
+  --white_text_elements: #ffffff;
+  --red_main: #d83437;
+  --red_pressed: #b5282b;
+  --surface-100: #ffffff;
+  --surface-200: #f4f4f4;
+  --text-muted: #5c5a5a;
+  --line: #d4d2d2;
+  --line-strong: #8e8b8b;
+  --material-light: rgba(255, 255, 255, 0.72);
+
+  --shadow-1: 0 1px 2px rgba(31, 30, 30, 0.06), 0 1px 1px rgba(31, 30, 30, 0.04);
+  --shadow-2: 0 2px 4px rgba(31, 30, 30, 0.04), 0 12px 32px rgba(31, 30, 30, 0.08);
+  --shadow-3: 0 4px 8px rgba(31, 30, 30, 0.06), 0 24px 64px rgba(31, 30, 30, 0.14);
+
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-16: 16px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-48: 48px;
+  --space-80: 80px;
+  --space-120: 120px;
+
+  --radius-8: 8px;
+  --radius-12: 12px;
+  --radius-20: 20px;
+  --radius-28: 28px;
+  --radius-full: 999px;
+
+  --duration-press: 160ms;
+  --duration-fast: 200ms;
+  --duration-base: 250ms;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-soft: cubic-bezier(0.25, 0.1, 0.25, 1);
+
+  --font-sans: var(--f-inter), "Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  background: var(--surface-100);
+  color: var(--Dark_text_elements);
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--Dark_text_elements);
+  outline-offset: 2px;
+}
+
+/* ---------- Плавающий переключатель вариантов (material-light, как шапка в ДС) ---------- */
+
+html[data-clean] .switcher {
+  display: none;
+}
+
+.switcher {
+  position: fixed;
+  z-index: 100;
+  right: var(--space-16);
+  bottom: var(--space-16);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border: 1px solid rgba(31, 30, 30, 0.06);
+  border-radius: var(--radius-full);
+  background: var(--material-light);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: var(--shadow-2);
+  font: 500 15px/20px var(--font-sans);
+}
+
+.switcher a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border-radius: var(--radius-full);
+  text-decoration: none;
+  transition: background-color var(--duration-fast) var(--ease-soft), color var(--duration-fast) var(--ease-soft);
+}
+
+.switcher__back {
+  padding: 0 var(--space-16);
+}
+
+.switcher__n {
+  min-width: 44px;
+  padding: 0 10px;
+  font-weight: 600;
+}
+
+.switcher a[aria-current="page"] {
+  background: var(--Dark_text_elements);
+  color: var(--white_text_elements);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .switcher a:not([aria-current="page"]):hover {
+    background: rgba(31, 30, 30, 0.06);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .switcher {
+    background: var(--surface-100);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
