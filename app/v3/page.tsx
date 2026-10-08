@@ -1,12 +1,12 @@
-import { Placeholder } from "@/components/Placeholder";
 import { Switcher } from "@/components/Switcher";
+import { Hero } from "./Hero";
 
 export const metadata = { title: "Вариант 3 — ИВС-СЕТИ" };
 
 export default function Page() {
   return (
     <>
-      <Placeholder n={3} />
+      <Hero />
       <Switcher current="/v3" />
     </>
   );

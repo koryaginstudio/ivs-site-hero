@@ -8,5 +8,5 @@ export const variants: Variant[] = [
   { href: "/v1", name: "Вариант 1", short: "1", image: "/shots/v1.jpg" },
   { href: "/v2", name: "Вариант 2", short: "2", image: "/shots/v2.jpg" },
   { href: "/v2-2", name: "Вариант 2.2", short: "2.2", image: "/shots/v2-2.jpg" },
-  { href: "/v3", name: "Вариант 3", short: "3" },
+  { href: "/v3", name: "Вариант 3", short: "3", image: "/shots/v3.jpg" },
 ];

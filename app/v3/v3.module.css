@@ -1,0 +1,1141 @@
+/* Вариант 3 — тёмный фон с переходом в акцентный красный (референс unlim.group).
+   Поверх — полупрозрачная стеклянная текстура, по центру заголовок, две кнопки и три стеклянные карточки.
+   Цвета, шрифт, радиусы, тени и тайминги — токены ДС ИВС-СЕТИ (globals.css). */
+
+.hero {
+  /* тёмная гамма: графит с тёплым оттенком → винный → red_main ДС */
+  --ink: #120d0e;
+  --ink-2: #1c1314;
+  --wine: #4a0d12;
+  /* светлый на тёмном — не чистый белый, мягкий тёплый (как #f3d9da в варианте 1, но нейтральнее) */
+  --on-dark: #f1ecec;
+  --on-dark-72: rgba(241, 236, 236, 0.72);
+  --on-dark-56: rgba(241, 236, 236, 0.56);
+  --sheet-bg: #160f10;
+  --glass-edge: rgba(241, 236, 236, 0.1);
+  --chip-line: rgba(241, 236, 236, 0.24);
+  --chip-line-hover: rgba(241, 236, 236, 0.6);
+  --nav-line: #ff3347;
+  --nav-hover: #ff5f6d;
+  /* красный полированный хром — тот же, что у кнопки в варианте 1 */
+  --chrome-red: linear-gradient(90deg, #f21b2c 0%, #e81424 14%, #d90f1f 22%, #ee1828 34%, #fa2536 42%, #e01121 54%, #d40e1d 62%, #ef1929 72%, #f82334 82%, #de1222 100%);
+  --sheen: linear-gradient(110deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.35) 50%, rgba(255, 255, 255, 0) 70%);
+  --ease-sheen: cubic-bezier(0.22, 1, 0.36, 1);
+  --gutter: clamp(16px, 4vw, 56px);
+
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  color: var(--on-dark);
+  /* база: сверху почти чёрный, к низу — винный; красное свечение даёт слой .bg */
+  background: linear-gradient(180deg, var(--ink) 0%, var(--ink-2) 42%, var(--wine) 100%);
+  overflow: hidden;
+  overflow: clip;
+}
+
+.hero :focus-visible {
+  outline: 2px solid var(--on-dark);
+  outline-offset: 2px;
+}
+
+/* ================= Фон ================= */
+
+.bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.bg > * {
+  position: absolute;
+}
+
+/* главное свечение акцентного цвета — снизу по центру, «восходит» под карточками */
+.glowMain {
+  left: 50%;
+  bottom: -55vmax;
+  width: 120vmax;
+  height: 80vmax;
+  margin-left: -60vmax;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(216, 52, 55, 0.95) 0%, rgba(216, 52, 55, 0.55) 38%, rgba(136, 19, 12, 0.25) 66%, rgba(136, 19, 12, 0) 100%);
+  will-change: transform;
+  animation: breathe 12s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+}
+
+/* второе свечение — справа сверху, глубже и тише: фон не «плоский» */
+.glowSide {
+  right: -25vmax;
+  top: -30vmax;
+  width: 70vmax;
+  height: 70vmax;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(181, 40, 43, 0.38) 0%, rgba(181, 40, 43, 0) 100%);
+  will-change: transform;
+  animation: drift 16s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+}
+
+@keyframes breathe {
+  to {
+    transform: translate3d(0, -4vh, 0) scale(1.08);
+  }
+}
+
+@keyframes drift {
+  to {
+    transform: translate3d(-8vw, 6vh, 0) scale(1.1);
+  }
+}
+
+/* стеклянная текстура: временное SVG или картинка */
+.glassSvg,
+.textureImg {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* в центре, под заголовком и кнопками, текстура тише — не спорит с текстом */
+  mask-image: radial-gradient(52% 42% at 50% 42%, rgba(0, 0, 0, 0.25) 0%, #000 100%);
+  -webkit-mask-image: radial-gradient(52% 42% at 50% 42%, rgba(0, 0, 0, 0.25) 0%, #000 100%);
+}
+
+.textureImg {
+  object-fit: cover;
+  opacity: 0.5;
+  mix-blend-mode: screen;
+}
+
+.glassBandA,
+.glassBandB,
+.glassBandC {
+  will-change: transform;
+  animation: float 18s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+}
+
+.glassBandB {
+  animation-duration: 22s;
+  animation-delay: -7s;
+}
+
+.glassBandC {
+  animation-duration: 15s;
+  animation-delay: -3s;
+}
+
+@keyframes float {
+  to {
+    transform: translate3d(-40px, 18px, 0);
+  }
+}
+
+/* лёгкое зерно — убирает «пластик» с градиента и полосы на больших экранах */
+.grain {
+  inset: 0;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ================= Шапка ================= */
+
+.header {
+  position: relative;
+  z-index: 20;
+  /* стеклянная полоса на всю ширину: тёмное стекло, сквозь него видна текстура фона */
+  background: rgba(28, 19, 20, 0.38);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(241, 236, 236, 0.08);
+}
+
+.bar {
+  position: relative;
+  z-index: 16; /* над мобильным меню, чтобы бургер оставался кликабельным */
+  display: flex;
+  align-items: center;
+  gap: var(--space-24);
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 12px var(--gutter);
+}
+
+.logo {
+  flex: none;
+  display: flex;
+  border-radius: var(--radius-12);
+}
+
+.logo {
+  position: relative;
+}
+
+.logo img {
+  display: block;
+  width: 48px;
+  height: 48px;
+}
+
+/* подложка чуть меньше знака, чтобы не выглядывала по краю */
+.logoBacking {
+  position: absolute;
+  inset: 0;
+  transform: scale(0.94);
+}
+
+.logoMark {
+  position: relative;
+}
+
+.nav {
+  margin-right: auto;
+}
+
+.nav > ul {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.navHasMenu {
+  position: relative;
+}
+
+.navLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--radius-8);
+  background: transparent;
+  color: var(--on-dark);
+  font: 500 15px/20px var(--font-sans);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease-soft);
+}
+
+/* Подчёркивание: при наведении рисуется слева направо, при уходе убирается вправо */
+.navLink {
+  position: relative;
+}
+
+.navLink::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 7px;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--nav-line);
+  box-shadow: 0 0 10px rgba(255, 51, 71, 0.85);
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.navLink[data-open]::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+.chevron {
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.navLink[data-open] .chevron {
+  transform: rotate(180deg);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+}
+
+.iconBtn {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: var(--radius-8);
+  background: transparent;
+  color: var(--on-dark);
+  cursor: pointer;
+  transition:
+    color var(--duration-fast) var(--ease-soft),
+    border-color var(--duration-fast) var(--ease-soft),
+    transform var(--duration-press) var(--ease-out);
+}
+
+.iconBtn:active {
+  transform: scale(0.97);
+}
+
+.phone {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* то же подчёркивание, что у пунктов меню */
+.phone::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 7px;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--nav-line);
+  box-shadow: 0 0 10px rgba(255, 51, 71, 0.85);
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.phoneNum {
+  font: 700 17px/22px var(--font-sans);
+  font-variant-numeric: tabular-nums;
+}
+
+/* лупа на такой же светлой подложке, что и телефон — не теряется на фоне */
+.search {
+  border: 1px solid var(--chip-line);
+  border-radius: var(--radius-full);
+}
+
+/* Акцентная кнопка шапки — яркий насыщенный красный со свечением, выделяется на тёмном */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 var(--space-24);
+  border-radius: var(--radius-full);
+  /* красный полированный хром */
+  background-image: var(--chrome-red);
+  background-size: 160% 100%;
+  background-position: 0% 0%;
+  color: #ffffff;
+  font: 600 15px/20px var(--font-sans);
+  text-decoration: none;
+  white-space: nowrap;
+  /* тонкий светлый контур + красное свечение — кнопка отделяется от красной шапки */
+  box-shadow:
+    0 0 0 1px rgba(255, 190, 196, 0.55),
+    0 0 22px rgba(255, 40, 60, 0.55),
+    0 4px 14px rgba(40, 0, 4, 0.3);
+}
+
+.cta:active,
+.btnInverse:active {
+  transform: translateY(0) scale(0.97);
+  transition-duration: var(--duration-press);
+}
+
+.burger {
+  display: none;
+  position: relative;
+}
+
+.burger span {
+  position: absolute;
+  left: 13px;
+  right: 13px;
+  height: 1.8px;
+  border-radius: 2px;
+  background: currentColor;
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.burger span:first-child {
+  transform: translateY(-4px);
+}
+.burger span:last-child {
+  transform: translateY(4px);
+}
+.burger[data-open] span:first-child {
+  transform: rotate(45deg);
+}
+.burger[data-open] span:last-child {
+  transform: rotate(-45deg);
+}
+
+/* --- Выпадающие панели --- */
+
+.dropdown,
+.mega {
+  position: absolute;
+  top: calc(100% + 8px);
+  z-index: 30;
+  border-radius: var(--radius-20);
+  background: var(--surface-100);
+  color: var(--Dark_text_elements);
+  box-shadow: var(--shadow-3);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-6px) scale(0.98);
+  transform-origin: top left;
+  /* закрытие быстрее открытия */
+  transition:
+    opacity 150ms var(--ease-out),
+    transform 150ms var(--ease-out),
+    visibility 0s linear 150ms;
+}
+
+.dropdown[data-open],
+.mega[data-open] {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: none;
+  transition:
+    opacity var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out),
+    visibility 0s;
+}
+
+/* мостик, чтобы курсор не «проваливался» между пунктом и панелью */
+.dropdown::before,
+.mega::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -12px;
+  height: 12px;
+}
+
+.dropdown {
+  left: 0;
+  min-width: 240px;
+  padding: var(--space-8);
+}
+
+.dropdown ul,
+.mega ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dropdown a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--space-16);
+  border-radius: var(--radius-12);
+  font: 500 15px/20px var(--font-sans);
+  text-decoration: none;
+  transition:
+    background-color var(--duration-fast) var(--ease-soft),
+    color var(--duration-fast) var(--ease-soft);
+}
+
+.mega {
+  left: var(--gutter);
+  right: var(--gutter);
+  max-height: calc(100dvh - 120px);
+  overflow: auto;
+  padding: var(--space-24) var(--space-32) var(--space-32);
+  transform-origin: top center;
+}
+
+.megaHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: var(--space-16);
+  margin-bottom: var(--space-24);
+  border-bottom: 1px solid var(--line);
+  font: 700 24px/32px var(--font-sans);
+  letter-spacing: -0.01em;
+}
+
+.megaAll {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 44px;
+  color: var(--red_main);
+  font: 500 15px/20px var(--font-sans);
+  text-decoration: none;
+}
+
+.megaGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-32) var(--space-24);
+}
+
+.megaTitle {
+  display: block;
+  margin-bottom: var(--space-8);
+  font: 600 15px/20px var(--font-sans);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-soft);
+}
+
+.megaGroup li a {
+  display: block;
+  padding: 6px 0;
+  font: 400 14px/20px var(--font-sans);
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-soft);
+}
+
+/* --- Мобильное меню --- */
+
+.sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 15;
+  padding: 96px var(--gutter) var(--space-32);
+  overflow: auto;
+  background: var(--sheet-bg);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition:
+    opacity 150ms var(--ease-out),
+    transform 150ms var(--ease-out),
+    visibility 0s linear 150ms;
+}
+
+.sheet[data-open] {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out),
+    visibility 0s;
+}
+
+.sheetList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sheetList > li {
+  border-bottom: 1px solid var(--glass-edge);
+}
+
+.sheetList > li > a,
+.sheetList summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 56px;
+  font: 600 20px/28px var(--font-sans);
+  text-decoration: none;
+  list-style: none;
+  cursor: pointer;
+}
+
+.sheetList summary::-webkit-details-marker {
+  display: none;
+}
+
+.sheetList details[open] .chevron {
+  transform: rotate(180deg);
+}
+
+.sheetList details ul {
+  margin: 0 0 var(--space-16);
+  padding: 0;
+  list-style: none;
+}
+
+.sheetList details a {
+  display: block;
+  padding: 10px 0;
+  font: 400 16px/22px var(--font-sans);
+  color: var(--on-dark-72);
+  text-decoration: none;
+}
+
+.sheetFoot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  margin-top: var(--space-32);
+}
+
+.sheetPhone {
+  font: 600 20px/28px var(--font-sans);
+  text-decoration: none;
+}
+
+
+/* ================= Главный экран ================= */
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-48);
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: clamp(48px, 9vh, 112px) var(--gutter) clamp(32px, 6vh, 64px);
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 980px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* надзаголовок — стеклянная «пилюля» */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 8px 16px;
+  border: 1px solid var(--glass-edge);
+  border-radius: var(--radius-full);
+  background: rgba(241, 236, 236, 0.05);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: var(--on-dark-72);
+  font: 500 14px/20px var(--font-sans);
+}
+
+.eyebrowDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--red_main);
+  box-shadow: 0 0 10px rgba(255, 51, 71, 0.9);
+}
+
+/* иерархия — размером, а не жирностью (как в варианте 1) */
+.title {
+  margin: var(--space-24) 0 0;
+  font: 600 clamp(36px, 5.2vw, 72px) / 1.06 var(--font-sans);
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+/* акцент — мягкий градиент из светлого красного ДС: читается на тёмном, не «кричит» */
+.titleAccent {
+  background: linear-gradient(90deg, #ff7477 0%, #d84346 55%, #ff5a5e 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.lead {
+  max-width: 640px;
+  margin: var(--space-24) 0 0;
+  color: var(--on-dark-72);
+  font: 400 clamp(16px, 1.3vw, 19px) / 1.55 var(--font-sans);
+  text-wrap: pretty;
+}
+
+.ctaRow {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-16);
+  margin-top: var(--space-48);
+}
+
+.btnAccent,
+.btnGlass {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 56px;
+  padding: 0 28px;
+  border-radius: var(--radius-full);
+  font: 600 16px/20px var(--font-sans);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* акцентная кнопка — красный хром со свечением, главный призыв экрана */
+.btnAccent {
+  background-image: var(--chrome-red);
+  background-size: 160% 100%;
+  background-position: 0% 0%;
+  color: #ffffff;
+  box-shadow:
+    0 0 0 1px rgba(255, 190, 196, 0.5),
+    0 0 32px rgba(255, 40, 60, 0.45),
+    0 8px 24px rgba(20, 0, 2, 0.4);
+}
+
+/* вторая кнопка — стекло, не спорит с акцентной */
+.btnGlass {
+  border: 1px solid var(--chip-line);
+  background: rgba(241, 236, 236, 0.06);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: var(--on-dark);
+  transition:
+    background-color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out),
+    transform var(--duration-press) var(--ease-out);
+}
+
+.btnArrow {
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.btnGlass:active {
+  transform: scale(0.97);
+}
+
+.phoneLine {
+  margin-top: var(--space-24);
+  color: var(--on-dark-56);
+  font: 400 15px/20px var(--font-sans);
+  text-decoration: none;
+}
+
+.phoneLine span {
+  color: var(--on-dark);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-decoration: underline;
+  text-decoration-color: rgba(241, 236, 236, 0.3);
+  text-underline-offset: 4px;
+  transition: text-decoration-color var(--duration-fast) var(--ease-soft);
+}
+
+/* механика хрома (как у ad-btn): градиент смещается, блик пробегает один раз */
+.cta,
+.btnAccent {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  transition:
+    background-position 420ms var(--ease-sheen),
+    box-shadow var(--duration-base) var(--ease-sheen),
+    transform var(--duration-base) var(--ease-sheen);
+}
+
+.cta::after,
+.btnAccent::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--sheen);
+  transform: translateX(-120%);
+}
+
+.cta:active,
+.btnAccent:active {
+  transform: scale(0.97);
+  transition-duration: var(--duration-press);
+}
+
+@keyframes sheen {
+  from {
+    transform: translateX(-120%);
+  }
+  to {
+    transform: translateX(120%);
+  }
+}
+
+/* --- Три карточки-тезиса: стекло на красном свечении --- */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-16);
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  min-height: 168px;
+  padding: var(--space-24) 28px;
+  border-radius: var(--radius-20);
+  background: linear-gradient(160deg, rgba(241, 236, 236, 0.1) 0%, rgba(241, 236, 236, 0.03) 100%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  backdrop-filter: blur(20px) saturate(140%);
+  /* тонкая светлая кромка сверху — «срез» стекла */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 0 0 1px rgba(241, 236, 236, 0.08),
+    0 24px 48px rgba(10, 0, 2, 0.28);
+  overflow: hidden;
+  transition: transform 500ms var(--ease-sheen), box-shadow 500ms var(--ease-sheen);
+}
+
+/* подсветка, идущая за курсором (координаты — из Hero.tsx) */
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 0%), rgba(255, 70, 80, 0.28), transparent 70%);
+  opacity: 0;
+  transition: opacity 400ms var(--ease-out);
+}
+
+.cardIndex {
+  color: var(--on-dark-56);
+  font: 500 13px/16px var(--font-sans);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+.cardValue {
+  margin-top: auto;
+  padding-top: var(--space-24);
+  font: 600 clamp(36px, 3.4vw, 48px) / 1 var(--font-sans);
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.cardLabel {
+  margin-top: var(--space-8);
+  color: var(--on-dark-72);
+  font: 400 15px/22px var(--font-sans);
+}
+
+/* --- Пометка «текстура тестовая» --- */
+
+.note {
+  position: absolute;
+  z-index: 3;
+  /* по правому краю контента шапки (контейнер 1440px), а не экрана */
+  right: max(var(--gutter), calc((100% - 1440px) / 2 + var(--gutter)));
+  top: 96px;
+}
+
+.noteBtn {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1.5px solid var(--chip-line-hover);
+  border-radius: var(--radius-full);
+  background: rgba(18, 13, 14, 0.4);
+  color: var(--on-dark);
+  font: 700 15px/1 var(--font-sans);
+  cursor: help;
+  transition:
+    border-color var(--duration-fast) var(--ease-soft),
+    background-color var(--duration-fast) var(--ease-soft);
+}
+
+/* зона нажатия 44px при видимом кружке 28px */
+.noteBtn::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+}
+
+.noteTip {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 260px;
+  padding: 12px 16px;
+  border-radius: var(--radius-12);
+  background: var(--surface-100);
+  color: var(--Dark_text_elements);
+  font: 400 14px/20px var(--font-sans);
+  box-shadow: var(--shadow-3);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px) scale(0.97);
+  transform-origin: top right;
+  pointer-events: none;
+  transition:
+    opacity 120ms var(--ease-out),
+    transform 120ms var(--ease-out),
+    visibility 0s linear 120ms;
+}
+
+.note:hover .noteTip,
+.noteBtn:focus + .noteTip {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition:
+    opacity 180ms var(--ease-out) 80ms,
+    transform 180ms var(--ease-out) 80ms,
+    visibility 0s 80ms;
+}
+
+/* --- Появление при загрузке: один раз, каскадом --- */
+
+.reveal {
+  animation: rise 700ms var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 70ms + 120ms);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+/* ================= Hover — только мышь ================= */
+
+@media (hover: hover) and (pointer: fine) {
+  .navLink:hover::after,
+  .phone:hover::after {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+  .iconBtn:hover {
+    color: var(--nav-hover);
+  }
+  .search:hover {
+    border-color: var(--chip-line-hover);
+    color: var(--on-dark);
+  }
+  .noteBtn:hover {
+    border-color: var(--on-dark);
+    background: rgba(18, 13, 14, 0.7);
+  }
+  .cta:hover,
+  .btnAccent:hover {
+    background-position: 100% 0%;
+    transform: translateY(-2px);
+  }
+  .cta:hover::after,
+  .btnAccent:hover::after {
+    animation: sheen 900ms var(--ease-sheen) 1;
+  }
+  .cta:hover:active,
+  .btnAccent:hover:active {
+    transform: scale(0.97);
+  }
+  .cta:hover,
+  .btnAccent:hover {
+    box-shadow:
+      0 0 0 1px rgba(255, 210, 214, 0.75),
+      0 0 40px rgba(255, 40, 60, 0.6),
+      0 12px 28px rgba(20, 0, 2, 0.45);
+  }
+  .btnGlass:hover {
+    background-color: rgba(241, 236, 236, 0.12);
+    border-color: var(--chip-line-hover);
+  }
+  .btnGlass:hover .btnArrow {
+    transform: translateX(3px);
+  }
+  .phoneLine:hover span {
+    text-decoration-color: var(--nav-line);
+  }
+  .card:hover {
+    transform: translateY(-6px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.2),
+      inset 0 0 0 1px rgba(255, 110, 118, 0.35),
+      0 32px 64px rgba(10, 0, 2, 0.36);
+  }
+  .card:hover::before {
+    opacity: 1;
+  }
+  .dropdown a:hover,
+  .megaTitle:hover,
+  .megaGroup li a:hover {
+    color: var(--red_main);
+  }
+  .dropdown a:hover {
+    background: var(--surface-200);
+  }
+  .megaAll:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+}
+
+/* ================= Адаптив ================= */
+
+@media (max-width: 1360px) {
+  .phone {
+    display: none;
+  }
+}
+
+@media (max-width: 1100px) {
+  .bar {
+    gap: var(--space-16);
+  }
+  .actions > .iconBtn:not(.burger) {
+    display: none;
+  }
+  .navLink {
+    padding: 0 10px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 940px) {
+  .nav {
+    display: none;
+  }
+  .actions {
+    margin-left: auto;
+  }
+  .burger {
+    display: grid;
+  }
+  .note {
+    top: 84px;
+  }
+}
+
+/* планшет: карточки — в ряд, но компактнее */
+@media (max-width: 820px) {
+  .card {
+    min-height: 0;
+    padding: 20px;
+  }
+  /* подпись — всегда под две строки, чтобы цифры в соседних карточках стояли на одной линии */
+  .cardLabel {
+    min-height: 40px;
+    font-size: 14px;
+    line-height: 20px;
+  }
+}
+
+/* телефон: карточки — столбиком, кнопки на всю ширину */
+@media (max-width: 640px) {
+  .cards {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .card {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    column-gap: var(--space-16);
+  }
+  .cardIndex {
+    display: none;
+  }
+  .cardValue {
+    margin: 0;
+    padding: 0;
+    font-size: 32px;
+  }
+  .cardLabel {
+    min-height: 0;
+    margin: 0;
+  }
+  .ctaRow {
+    flex-direction: column;
+    align-self: stretch;
+  }
+  .btnAccent,
+  .btnGlass {
+    width: 100%;
+  }
+  .eyebrow {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 560px) {
+  .actions .cta {
+    display: none;
+  }
+  .sheetFoot .cta {
+    display: inline-flex;
+  }
+}
+
+/* ================= Доступность ================= */
+
+@media (prefers-reduced-transparency: reduce) {
+  .header {
+    background: var(--ink-2);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .card,
+  .btnGlass,
+  .eyebrow {
+    background: rgba(40, 28, 29, 0.92);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glowMain,
+  .glowSide,
+  .glassBandA,
+  .glassBandB,
+  .glassBandC {
+    animation: none;
+  }
+  .reveal {
+    animation: fade 200ms linear both;
+  }
+  .navLink::after,
+  .phone::after {
+    transition: none;
+  }
+  .cta::after,
+  .btnAccent::after {
+    display: none;
+  }
+  .cta:hover,
+  .btnAccent:hover,
+  .card:hover,
+  .cta:active,
+  .btnAccent:active,
+  .btnGlass:active,
+  .iconBtn:active {
+    transform: none;
+  }
+  .dropdown,
+  .mega,
+  .sheet {
+    transform: none;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
