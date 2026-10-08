@@ -38,6 +38,18 @@
   position: absolute;
 }
 
+/* слои параллакса: с запасом по краям, чтобы при сдвиге за мышью не открывался край */
+.layerGlow,
+.layerTexture {
+  inset: -48px;
+  will-change: transform;
+}
+
+.layerGlow > *,
+.layerTexture > * {
+  position: absolute;
+}
+
 /* фирменный красный свет — в правом нижнем углу, как .ivs-stage::before в ДС: gradient-brand, размытый.
    Левая часть экрана остаётся графитовой — под текстом спокойно. */
 .glow {
@@ -50,7 +62,7 @@
   opacity: 0.62;
   filter: blur(96px);
   will-change: transform;
-  animation: breathe 14s var(--ease-soft) infinite alternate;
+  animation: breathe 9s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
 }
 
 /* глубокий подсвет над основным — растягивает переход «тёмный → красный» по диагонали к центру справа */
@@ -64,18 +76,19 @@
   opacity: 0.45;
   filter: blur(120px);
   will-change: transform;
-  animation: drift 18s var(--ease-soft) infinite alternate;
+  animation: drift 11s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+  animation-delay: -4s;
 }
 
 @keyframes breathe {
   to {
-    transform: translate3d(-4%, -6%, 0) scale(1.06);
+    transform: translate3d(-7%, -9%, 0) scale(1.14);
   }
 }
 
 @keyframes drift {
   to {
-    transform: translate3d(-6%, 6%, 0);
+    transform: translate3d(-8%, 12%, 0) scale(1.18);
   }
 }
 
@@ -98,22 +111,29 @@
 .glassBandA,
 .glassBandB,
 .glassBandC {
-  animation: float 20s var(--ease-soft) infinite alternate;
+  animation: float 12s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
 }
 
 .glassBandB {
-  animation-duration: 24s;
-  animation-delay: -8s;
+  animation-name: floatBack;
+  animation-duration: 15s;
+  animation-delay: -6s;
 }
 
 .glassBandC {
-  animation-duration: 17s;
-  animation-delay: -4s;
+  animation-duration: 10s;
+  animation-delay: -3s;
 }
 
 @keyframes float {
   to {
-    transform: translate3d(-40px, 16px, 0);
+    transform: translate3d(-140px, 48px, 0);
+  }
+}
+
+@keyframes floatBack {
+  to {
+    transform: translate3d(110px, -60px, 0);
   }
 }
 
@@ -189,11 +209,31 @@
   text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
-  transition: background-color var(--duration-fast) var(--ease-soft);
 }
 
-.navLink[data-open] {
-  background: rgba(255, 255, 255, 0.12);
+.navLink {
+  position: relative;
+  isolation: isolate;
+}
+
+/* подложка-«пилюля» проявляется с лёгким масштабом */
+.navLink::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: rgba(255, 255, 255, 0.16);
+  opacity: 0;
+  transform: scale(0.85);
+  transition:
+    opacity var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.navLink[data-open]::before {
+  opacity: 1;
+  transform: none;
 }
 
 .chevron {
@@ -511,12 +551,17 @@
   overflow: hidden;
   -webkit-tap-highlight-color: transparent;
   transition:
-    transform var(--duration-press) var(--ease-out),
-    box-shadow var(--duration-fast) var(--ease-out);
+    transform var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
 }
 
 .btn:active {
   transform: scale(0.97);
+}
+
+.btnArrow {
+  flex: none;
+  transition: transform var(--duration-fast) var(--ease-out);
 }
 
 .btnSm {
@@ -653,9 +698,30 @@
   box-shadow: var(--shadow-glass);
   color: var(--on-dark);
   text-decoration: none;
+  overflow: hidden;
+  isolation: isolate;
   transition:
-    transform var(--duration-fast) var(--ease-out),
-    background-color var(--duration-fast) var(--ease-soft);
+    transform var(--duration-base) var(--ease-out),
+    background-color var(--duration-base) var(--ease-soft),
+    border-color var(--duration-base) var(--ease-soft),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+
+/* блик пробегает по стеклу при наведении — один раз */
+.glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(110deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.22) 50%, rgba(255, 255, 255, 0) 70%);
+  transform: translateX(-120%);
+}
+
+@keyframes glint {
+  to {
+    transform: translateX(120%);
+  }
 }
 
 .glass:active {
@@ -757,31 +823,82 @@
 
 :global(.ivs-motion) .reveal {
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(24px);
 }
 
 .hero[data-visible] .reveal {
   opacity: 1;
   transform: none;
   transition:
-    opacity var(--duration-enter) var(--ease-out),
-    transform var(--duration-enter) var(--ease-out);
-  transition-delay: calc(var(--i, 0) * var(--stagger-step));
+    opacity 700ms var(--ease-out),
+    transform 700ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 80ms + 150ms);
+}
+
+/* фон проявляется при загрузке: свет разгорается, текстура «оседает» из лёгкого увеличения */
+:global(.ivs-motion) .glow,
+:global(.ivs-motion) .glowSide {
+  opacity: 0;
+}
+
+:global(.ivs-motion) .glassSvg,
+:global(.ivs-motion) .textureImg {
+  opacity: 0;
+  transform: scale(1.08);
+}
+
+.hero[data-visible] .glow {
+  opacity: 0.62;
+  transition: opacity 1400ms var(--ease-out);
+}
+
+.hero[data-visible] .glowSide {
+  opacity: 0.5;
+  transition: opacity 1400ms var(--ease-out) 200ms;
+}
+
+.hero[data-visible] .glassSvg,
+.hero[data-visible] .textureImg {
+  transform: none;
+  transition:
+    opacity 1600ms var(--ease-out) 100ms,
+    transform 1800ms var(--ease-out) 100ms;
+}
+
+.hero[data-visible] .glassSvg {
+  opacity: 1;
+}
+
+.hero[data-visible] .textureImg {
+  opacity: 0.5;
 }
 
 /* ================= Hover — только мышь ================= */
 
 @media (hover: hover) and (pointer: fine) {
-  .navLink:hover,
+  .navLink:hover::before {
+    opacity: 1;
+    transform: none;
+  }
   .burger:hover {
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.16);
   }
   .phone:hover {
     text-decoration: underline;
     text-underline-offset: 4px;
   }
+  /* primary: подъём, фирменный градиент и свечение — на тёмном к shadow-brand добавлен красный ореол */
   .btnPrimary:hover {
-    box-shadow: var(--shadow-brand);
+    transform: translateY(-2px);
+    box-shadow:
+      var(--shadow-brand),
+      0 0 32px rgba(216, 52, 55, 0.55);
+  }
+  .btnPrimary:hover:active {
+    transform: scale(0.97);
+  }
+  .btn:hover .btnArrow {
+    transform: translateX(4px);
   }
   .btnPrimary:hover::before {
     opacity: 1;
@@ -794,18 +911,26 @@
   }
   .link:hover .chev,
   .megaAll:hover .chev {
-    transform: translateX(3px);
+    transform: translateX(4px);
   }
   /* плашка: подъём на 4px, стекло светлее (как hover .ivs-btn--glass) */
   .glass:hover {
-    transform: translateY(-4px);
+    transform: translateY(-8px);
     background-color: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.45),
+      0 24px 48px rgba(0, 0, 0, 0.32);
+  }
+  .glass:hover::after {
+    animation: glint 900ms var(--ease-out) 1;
   }
   .glass:hover:active {
-    transform: translateY(-4px) scale(0.99);
+    transform: translateY(-8px) scale(0.99);
   }
   .glass:hover .glassChev {
-    transform: translateX(3px);
+    transform: translateX(4px);
+    color: var(--on-dark);
   }
   .noteBtn:hover {
     background: rgba(255, 255, 255, 0.22);
@@ -948,9 +1073,19 @@
     animation: none;
   }
   :global(.ivs-motion) .reveal,
-  .hero[data-visible] .reveal {
+  .hero[data-visible] .reveal,
+  :global(.ivs-motion) .glassSvg,
+  .hero[data-visible] .glassSvg {
     transform: none;
     transition: opacity var(--duration-fast) linear;
+  }
+  .glass::after {
+    display: none;
+  }
+  .btnPrimary:hover,
+  .btnPrimary:hover:active,
+  .btn:hover .btnArrow {
+    transform: none;
   }
   .btn:active,
   .glass:active,

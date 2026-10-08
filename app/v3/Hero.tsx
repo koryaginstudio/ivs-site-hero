@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { heroV2, stats } from "@/components/ivs-content";
 import { GlassTexture } from "./GlassTexture";
 import { Header } from "./Header";
@@ -31,12 +31,61 @@ export function Hero() {
     return () => cancelAnimationFrame(raf);
   }, []);
 
+  // Параллакс фона за мышью: текстура и свет смещаются в разные стороны — появляется глубина.
+  // Плавно, с инерцией; transform пишем прямо в элементы. Только мышь и без reduced-motion.
+  const glowRef = useRef<HTMLDivElement>(null);
+  const texRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const sec = ref.current;
+    const glow = glowRef.current;
+    const tex = texRef.current;
+    if (!sec || !glow || !tex) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+
+    let tx = 0, ty = 0, x = 0, y = 0, raf = 0;
+    const tick = () => {
+      x += (tx - x) * 0.06;
+      y += (ty - y) * 0.06;
+      tex.style.transform = `translate3d(${(x * 36).toFixed(2)}px, ${(y * 24).toFixed(2)}px, 0)`;
+      glow.style.transform = `translate3d(${(x * -28).toFixed(2)}px, ${(y * -20).toFixed(2)}px, 0)`;
+      raf = Math.abs(tx - x) > 0.001 || Math.abs(ty - y) > 0.001 ? requestAnimationFrame(tick) : 0;
+    };
+    const kick = () => {
+      if (!raf) raf = requestAnimationFrame(tick);
+    };
+    const onMove = (e: PointerEvent) => {
+      if (e.pointerType !== "mouse") return;
+      const r = sec.getBoundingClientRect();
+      tx = ((e.clientX - r.left) / r.width - 0.5) * 2;
+      ty = ((e.clientY - r.top) / r.height - 0.5) * 2;
+      kick();
+    };
+    const onLeave = () => {
+      tx = 0;
+      ty = 0;
+      kick();
+    };
+    sec.addEventListener("pointermove", onMove);
+    sec.addEventListener("pointerleave", onLeave);
+    return () => {
+      sec.removeEventListener("pointermove", onMove);
+      sec.removeEventListener("pointerleave", onLeave);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
   return (
     <section className={s.hero} ref={ref}>
       <div className={s.bg} aria-hidden="true">
-        <span className={s.glow} />
-        <span className={s.glowSide} />
-        {TEXTURE ? <img src={TEXTURE} alt="" className={s.textureImg} /> : <GlassTexture />}
+        <div className={s.layerGlow} ref={glowRef}>
+          <span className={s.glow} />
+          <span className={s.glowSide} />
+        </div>
+        <div className={s.layerTexture} ref={texRef}>
+          {TEXTURE ? <img src={TEXTURE} alt="" className={s.textureImg} /> : <GlassTexture />}
+        </div>
       </div>
 
       <Header />
@@ -58,6 +107,9 @@ export function Hero() {
           <div className={`${s.actions} ${s.reveal}`} style={{ "--i": 3 } as React.CSSProperties}>
             <a href="#callback" className={`${s.btn} ${s.btnPrimary}`}>
               Заказать обратный звонок
+              <svg className={s.btnArrow} width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
             </a>
             <a href="https://ivs-corp.ru/services/" className={s.link}>
               Все услуги <span className={s.chev}>›</span>
