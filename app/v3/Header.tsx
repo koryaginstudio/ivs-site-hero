@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { nav, phone, type NavItem } from "@/components/ivs-content";
 import s from "./v3.module.css";
 
@@ -14,6 +14,8 @@ function Chevron() {
   );
 }
 
+// Шапка варианта 3 — NavBar из ДС: плавающая «пилюля», на тёмном фоне — «жидкое стекло»
+// (material-glass, glass-edge, shadow-glass). Белый знак — готовый файл для тёмного фона.
 export function Header() {
   const [open, setOpen] = useState<string | null>(null);
   const [sheet, setSheet] = useState(false);
@@ -27,8 +29,7 @@ export function Header() {
     cancelClose();
     timer.current = setTimeout(() => setOpen(null), CLOSE_DELAY);
   };
-
-  const close = useCallback(() => setOpen(null), []);
+  const close = () => setOpen(null);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -76,7 +77,7 @@ export function Header() {
     }
 
     const isOpen = open === item.label;
-    const panelId = `nav-${item.label}`;
+    const panelId = `v3-nav-${item.label}`;
 
     return (
       <li key={item.label} className={item.kind === "menu" ? s.navHasMenu : undefined} {...hoverProps(item.label)}>
@@ -108,15 +109,15 @@ export function Header() {
         ) : (
           <div id={panelId} className={s.mega} data-open={isOpen || undefined}>
             <div className={s.megaHead}>
-              <span>Услуги</span>
+              <span className={s.megaTitle}>Услуги</span>
               <a href={item.href} onClick={close} className={s.megaAll}>
-                Все услуги <span aria-hidden="true">›</span>
+                Все услуги <span className={s.chev}>›</span>
               </a>
             </div>
             <div className={s.megaGrid}>
               {item.groups.map((g) => (
                 <div key={g.label} className={s.megaGroup}>
-                  <a href={g.href} onClick={close} className={s.megaTitle}>
+                  <a href={g.href} onClick={close} className={s.megaGroupTitle}>
                     {g.label}
                   </a>
                   <ul>
@@ -141,43 +142,33 @@ export function Header() {
     <header className={s.header} ref={root}>
       <div className={s.bar}>
         <a href="https://ivs-corp.ru/" className={s.logo} aria-label="ИВС-СЕТИ — на главную">
-          {/* знак с градиентом из ДС; буквы в нём — прорези, белая подложка по контуру ромба делает их белыми на красном фоне */}
-          <img src="/ivs-mark-backing.svg" width={48} height={48} alt="" className={s.logoBacking} />
-          <img src="/ivs-mark-gradient.svg" width={48} height={48} alt="" className={s.logoMark} />
+          <img src="/ivs-mark-white.svg" width={40} height={40} alt="" />
         </a>
 
         <nav className={s.nav} aria-label="Основное меню">
           <ul>{nav.map(renderItem)}</ul>
         </nav>
 
-        <div className={s.actions}>
-          <button type="button" className={`${s.iconBtn} ${s.search}`} aria-label="Поиск по сайту">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" strokeWidth="2.2" />
-              <path d="m15.5 15.5 5 5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
-            </svg>
-          </button>
-          <a href={phone.href} className={s.phone}>
-            <span className={s.phoneNum}>{phone.label}</span>
-          </a>
-          <a href="#callback" className={s.cta}>
-            Заказать звонок
-          </a>
-          <button
-            type="button"
-            className={`${s.iconBtn} ${s.burger}`}
-            aria-label={sheet ? "Закрыть меню" : "Открыть меню"}
-            aria-expanded={sheet}
-            data-open={sheet || undefined}
-            onClick={() => setSheet((v) => !v)}
-          >
-            <span />
-            <span />
-          </button>
-        </div>
+        <a href={phone.href} className={s.phone}>
+          {phone.label}
+        </a>
+        <a href="#callback" className={`${s.btn} ${s.btnPrimary} ${s.btnSm} ${s.headerCta}`}>
+          Заказать звонок
+        </a>
+        <button
+          type="button"
+          className={s.burger}
+          aria-label={sheet ? "Закрыть меню" : "Открыть меню"}
+          aria-expanded={sheet}
+          data-open={sheet || undefined}
+          onClick={() => setSheet((v) => !v)}
+        >
+          <span />
+          <span />
+        </button>
       </div>
 
-      {/* Мобильное меню */}
+      {/* Мобильное меню — тёмная панель под «пилюлей» */}
       <div className={s.sheet} data-open={sheet || undefined} aria-hidden={!sheet}>
         <nav aria-label="Мобильное меню">
           <ul className={s.sheetList}>
@@ -213,7 +204,7 @@ export function Header() {
             <a href={phone.href} className={s.sheetPhone} tabIndex={sheet ? 0 : -1}>
               {phone.label}
             </a>
-            <a href="#callback" className={s.cta} tabIndex={sheet ? 0 : -1}>
+            <a href="#callback" className={`${s.btn} ${s.btnPrimary}`} tabIndex={sheet ? 0 : -1}>
               Заказать звонок
             </a>
           </div>

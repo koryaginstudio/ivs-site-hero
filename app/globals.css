@@ -10,10 +10,22 @@
   --line: #d4d2d2;
   --line-strong: #8e8b8b;
   --material-light: rgba(255, 255, 255, 0.72);
+  --red_light: #d84346;
+  --red_deep: #88130c;
+  --surface-inverse: #1f1e1e;
+  --material-glass: rgba(255, 255, 255, 0.14);
+  --glass-edge: rgba(255, 255, 255, 0.28);
+
+  --gradient-brand: linear-gradient(45deg, #88130c 0%, #d84346 53%, #d84346 100%);
+  --gradient-brand-text: linear-gradient(45deg, #88130c 0%, #d84346 70%);
+  --gradient-ink: linear-gradient(160deg, #1f1e1e 0%, #1f1e1e 55%, #3a1513 100%);
+  --gradient-surface: linear-gradient(180deg, #ffffff 0%, #f4f4f4 100%);
 
   --shadow-1: 0 1px 2px rgba(31, 30, 30, 0.06), 0 1px 1px rgba(31, 30, 30, 0.04);
   --shadow-2: 0 2px 4px rgba(31, 30, 30, 0.04), 0 12px 32px rgba(31, 30, 30, 0.08);
   --shadow-3: 0 4px 8px rgba(31, 30, 30, 0.06), 0 24px 64px rgba(31, 30, 30, 0.14);
+  --shadow-brand: 0 2px 4px rgba(136, 19, 12, 0.16), 0 10px 24px rgba(136, 19, 12, 0.24);
+  --shadow-glass: inset 0 1px 0 rgba(255, 255, 255, 0.35), inset 0 -1px 0 rgba(255, 255, 255, 0.06), 0 8px 32px rgba(0, 0, 0, 0.24);
 
   --space-4: 4px;
   --space-8: 8px;
@@ -33,7 +45,10 @@
   --duration-press: 160ms;
   --duration-fast: 200ms;
   --duration-base: 250ms;
+  --duration-enter: 500ms;
+  --stagger-step: 60ms;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --ease-soft: cubic-bezier(0.25, 0.1, 0.25, 1);
 
   --font-sans: var(--f-inter), "Inter", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
