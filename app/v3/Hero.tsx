@@ -2,13 +2,11 @@
 
 import { useEffect, useLayoutEffect, useRef } from "react";
 import { heroV2, stats } from "@/components/ivs-content";
-import { GlassTexture } from "./GlassTexture";
 import { Header } from "./Header";
 import s from "./v3.module.css";
 
-// Фоновая текстура: путь к картинке в /public (например "/hero/v3-texture.webp").
-// Пока null — рисуется временное SVG-«стекло» и кружок «!».
-const TEXTURE: string | null = null;
+// Фоновая текстура — стеклянные ленты Антона (PNG/WebP с прозрачностью), прижаты к правому нижнему углу.
+const TEXTURE = "/hero/v3-texture.webp";
 
 // Карточки-тезисы ведут в разделы, к которым относятся цифры.
 const statLinks = ["https://ivs-corp.ru/projects/", "https://ivs-corp.ru/company/", "https://ivs-corp.ru/company/"];
@@ -85,7 +83,7 @@ export function Hero() {
         </div>
         <div className={s.layerTexture} ref={texRef}>
           <div className={s.texIntro}>
-            {TEXTURE ? <img src={TEXTURE} alt="" className={s.textureImg} /> : <GlassTexture />}
+            <img src={TEXTURE} alt="" width={1672} height={940} className={s.textureImg} />
           </div>
         </div>
         {/* неподвижное затемнение слева — текстура гаснет к тексту (вместо маски на движущемся слое) */}
@@ -136,16 +134,15 @@ export function Hero() {
         </ul>
       </div>
 
-      {!TEXTURE && (
-        <div className={s.note}>
+      {/* пометка: текстура тестовая (как у всех иллюстраций hero) */}
+      <div className={s.note}>
           <button type="button" className={s.noteBtn} aria-label="О фоновой текстуре" aria-describedby="v3-texture-note">
             !
           </button>
           <span role="tooltip" id="v3-texture-note" className={s.noteTip}>
             Фоновая текстура тестовая — добавлена, чтобы показать идею главного экрана. В финальной версии я её заменю.
           </span>
-        </div>
-      )}
+      </div>
     </section>
   );
 }

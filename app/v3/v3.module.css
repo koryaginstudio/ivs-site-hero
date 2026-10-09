@@ -103,45 +103,25 @@
   }
 }
 
-/* ленты стекла: каждая — свой слой, плывёт через transform */
-.band,
+/* стеклянные ленты — картинка с прозрачностью, прижата к правому нижнему углу.
+   Сама плывёт медленно (transform), за мышью её сдвигает слой параллакса. */
 .textureImg {
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.band {
+  right: 0;
+  bottom: 0;
+  width: auto;
+  height: 90%;
+  max-width: none;
+  opacity: 0.78;
   will-change: transform;
-  animation: float 12s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
-}
-
-.textureImg {
-  object-fit: cover;
-  opacity: 0.5;
-  mix-blend-mode: screen;
-}
-
-.bandB {
-  animation-name: floatBack;
-  animation-duration: 15s;
-  animation-delay: -6s;
-}
-
-.bandC {
-  animation-duration: 10s;
-  animation-delay: -3s;
+  animation: float 14s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
 }
 
 @keyframes float {
-  to {
-    transform: translate3d(-140px, 48px, 0);
+  from {
+    transform: translate3d(0, 0, 0) rotate(0deg);
   }
-}
-
-@keyframes floatBack {
   to {
-    transform: translate3d(110px, -60px, 0);
+    transform: translate3d(-36px, 18px, 0) rotate(-1.5deg);
   }
 }
 
@@ -1009,6 +989,11 @@
 }
 
 @media (max-width: 640px) {
+  /* на телефоне ленты — небольшие и тихие, в правом нижнем углу: не мешают заголовку */
+  .textureImg {
+    height: 52%;
+    opacity: 0.45;
+  }
   .stats {
     grid-template-columns: 1fr;
     gap: 12px;
@@ -1072,7 +1057,7 @@
 @media (prefers-reduced-motion: reduce) {
   .glow,
   .glowSide,
-  .band {
+  .textureImg {
     animation: none;
   }
   :global(.ivs-motion) .reveal,
