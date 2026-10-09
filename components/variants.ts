@@ -5,8 +5,8 @@
 export type Variant = { href: string; name: string; short: string; image?: string; comment?: string };
 
 export const variants: Variant[] = [
-  { href: "/v1", name: "Вариант 1", short: "1", image: "/shots/v1.jpg" },
-  { href: "/v2", name: "Вариант 2", short: "2", image: "/shots/v2.jpg" },
-  { href: "/v2-2", name: "Вариант 2.2", short: "2.2", image: "/shots/v2-2.jpg" },
-  { href: "/v3", name: "Вариант 3", short: "3", image: "/shots/v3.jpg" },
+  { href: "/v1", name: "Вариант 1", short: "1", image: "/shots/v1.jpg", comment: "Насыщенный красный фон с мягким переливом. Слайдер из трёх ключевых направлений." },
+  { href: "/v2", name: "Вариант 2", short: "2", image: "/shots/v2.jpg", comment: "Светлый фон. Один продающий экран с ключевыми цифрами и 3D-иллюстрацией." },
+  { href: "/v2-2", name: "Вариант 2.2", short: "2.2", image: "/shots/v2-2.jpg", comment: "Вариант 2 с главным блоком на фирменном красном градиенте." },
+  { href: "/v3", name: "Вариант 3", short: "3", image: "/shots/v3.jpg", comment: "Тёмный фон с красным светом и стеклянной текстурой. Цифры на стеклянных плашках." },
 ];
