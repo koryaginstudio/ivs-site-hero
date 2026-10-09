@@ -8,6 +8,27 @@ import s from "./v3.module.css";
 // Фоновая текстура — стеклянные ленты Антона (PNG/WebP с прозрачностью), прижаты к правому нижнему углу.
 const TEXTURE = "/hero/v3-texture.webp";
 
+function PhoneIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M5 4h3.5l1.8 4.4-2.2 1.4a11 11 0 0 0 6.1 6.1l1.4-2.2L20 15.5V19a1.5 1.5 0 0 1-1.6 1.5A16.5 16.5 0 0 1 3.5 5.6 1.5 1.5 0 0 1 5 4Z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function ArrowIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M7 17 17 7M8 7h9v9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 // Карточки-тезисы ведут в разделы, к которым относятся цифры.
 const statLinks = ["https://ivs-corp.ru/projects/", "https://ivs-corp.ru/company/", "https://ivs-corp.ru/company/"];
 
@@ -102,28 +123,30 @@ export function Hero() {
             {heroV2.text}
           </p>
 
-          {/* кнопки — как в варианте 2: 60px, скругление 16, квадрат-иконка слева, линия снизу при наведении */}
+          {/* кнопки — форма варианта 2 (квадрат-иконка слева); при наведении текст «перекатывается»,
+              а иконка уходит и возвращается с другой стороны */}
           <div className={`${s.actions} ${s.reveal}`} style={{ "--i": 2 } as React.CSSProperties}>
-            <a href="#callback" className={`${s.cta} ${s.ctaPrimary}`}>
-              <span className={s.ctaChip}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path
-                    d="M5 4h3.5l1.8 4.4-2.2 1.4a11 11 0 0 0 6.1 6.1l1.4-2.2L20 15.5V19a1.5 1.5 0 0 1-1.6 1.5A16.5 16.5 0 0 1 3.5 5.6 1.5 1.5 0 0 1 5 4Z"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+            <a href="#callback" className={`${s.cta} ${s.ctaPrimary}`} aria-label="Заказать обратный звонок">
+              <span className={`${s.ctaChip} ${s.ctaChipUp}`} aria-hidden="true">
+                <PhoneIcon />
+                <PhoneIcon />
               </span>
-              Заказать обратный звонок
+              <span className={s.roll} aria-hidden="true">
+                <span className={s.rollText} data-text="Заказать обратный звонок">
+                  Заказать обратный звонок
+                </span>
+              </span>
             </a>
-            <a href="https://ivs-corp.ru/services/" className={`${s.cta} ${s.ctaSecondary}`}>
-              <span className={s.ctaChip}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path d="M7 17 17 7M8 7h9v9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+            <a href="https://ivs-corp.ru/services/" className={`${s.cta} ${s.ctaSecondary}`} aria-label="Все услуги">
+              <span className={s.ctaChip} aria-hidden="true">
+                <ArrowIcon />
+                <ArrowIcon />
               </span>
-              Все услуги
+              <span className={s.roll} aria-hidden="true">
+                <span className={s.rollText} data-text="Все услуги">
+                  Все услуги
+                </span>
+              </span>
             </a>
           </div>
         </div>

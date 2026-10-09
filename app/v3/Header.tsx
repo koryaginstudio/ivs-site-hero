@@ -142,7 +142,9 @@ export function Header() {
     <header className={s.header} ref={root}>
       <div className={s.bar}>
         <a href="https://ivs-corp.ru/" className={s.logo} aria-label="ИВС-СЕТИ — на главную">
-          <img src="/ivs-mark.svg" width={40} height={40} alt="" />
+          {/* красный знак: буквы в файле — прорези, белая подложка по контуру ромба делает их белыми на тёмном (как в варианте 1) */}
+          <img src="/ivs-mark-backing.svg" width={40} height={40} alt="" className={s.logoBacking} />
+          <img src="/ivs-mark.svg" width={40} height={40} alt="" className={s.logoMark} />
         </a>
 
         <nav className={s.nav} aria-label="Основное меню">
@@ -150,10 +152,23 @@ export function Header() {
         </nav>
 
         <a href={phone.href} className={s.phone}>
+          <svg className={s.phoneIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="M5 4h3.5l1.8 4.4-2.2 1.4a11 11 0 0 0 6.1 6.1l1.4-2.2L20 15.5V19a1.5 1.5 0 0 1-1.6 1.5A16.5 16.5 0 0 1 3.5 5.6 1.5 1.5 0 0 1 5 4Z"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinejoin="round"
+            />
+          </svg>
           {phone.label}
         </a>
-        <a href="#callback" className={`${s.btn} ${s.btnPrimary} ${s.headerCta}`}>
-          Заказать звонок
+        <a href="#callback" className={`${s.btn} ${s.btnPrimary} ${s.headerCta}`} aria-label="Заказать звонок">
+          {/* при наведении текст «перекатывается»: уходит вверх, снизу приходит копия */}
+          <span className={s.roll} aria-hidden="true">
+            <span className={s.rollText} data-text="Заказать звонок">
+              Заказать звонок
+            </span>
+          </span>
         </a>
         <button
           type="button"
