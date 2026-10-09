@@ -6,7 +6,7 @@ import { Header } from "./Header";
 import s from "./v3.module.css";
 
 // Фоновая текстура — стеклянные ленты Антона (PNG/WebP с прозрачностью), прижаты к правому нижнему углу.
-const TEXTURE = "/hero/v3-texture.webp";
+const TEXTURE = "/hero/v3-texture-soft.webp";
 
 function PhoneIcon() {
   return (
