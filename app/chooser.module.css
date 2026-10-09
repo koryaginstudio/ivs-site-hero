@@ -15,18 +15,11 @@
 
 /* h1: 48/54, 700, -0.02em */
 .title {
-  margin: var(--space-120) 0 0;
+  margin: var(--space-120) 0 var(--space-48);
   font: 700 48px/54px var(--font-sans);
   letter-spacing: -0.02em;
 }
 
-/* lead: 21/32, text-muted */
-.lead {
-  max-width: 760px;
-  margin: var(--space-16) 0 var(--space-48);
-  font: 400 21px/32px var(--font-sans);
-  color: var(--text-muted);
-}
 
 .grid {
   list-style: none;
@@ -111,14 +104,9 @@
     padding: var(--space-16) var(--space-16) var(--space-80);
   }
   .title {
-    margin: var(--space-48) 0 0;
+    margin: var(--space-48) 0 var(--space-32);
     font-size: 32px;
     line-height: 40px;
-  }
-  .lead {
-    margin-bottom: var(--space-32);
-    font-size: 17px;
-    line-height: 26px;
   }
   .grid {
     grid-template-columns: 1fr;
