@@ -84,8 +84,12 @@ export function Hero() {
           <span className={s.glowSide} />
         </div>
         <div className={s.layerTexture} ref={texRef}>
-          {TEXTURE ? <img src={TEXTURE} alt="" className={s.textureImg} /> : <GlassTexture />}
+          <div className={s.texIntro}>
+            {TEXTURE ? <img src={TEXTURE} alt="" className={s.textureImg} /> : <GlassTexture />}
+          </div>
         </div>
+        {/* неподвижное затемнение слева — текстура гаснет к тексту (вместо маски на движущемся слое) */}
+        <span className={s.shade} />
       </div>
 
       <Header />
