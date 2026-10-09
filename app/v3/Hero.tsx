@@ -94,34 +94,43 @@ export function Hero() {
 
       <div className={s.main}>
         <div className={s.copy}>
-          <p className={`${s.eyebrow} ${s.reveal}`} style={{ "--i": 0 } as React.CSSProperties}>
-            Группа ИВС · с 1990 года
-          </p>
-
-          <h1 className={`${s.title} ${s.reveal}`} style={{ "--i": 1 } as React.CSSProperties}>
+          <h1 className={`${s.title} ${s.reveal}`} style={{ "--i": 0 } as React.CSSProperties}>
             {heroV2.title} <span className={s.titleAccent}>{heroV2.accent}</span>
           </h1>
 
-          <p className={`${s.lead} ${s.reveal}`} style={{ "--i": 2 } as React.CSSProperties}>
+          <p className={`${s.lead} ${s.reveal}`} style={{ "--i": 1 } as React.CSSProperties}>
             {heroV2.text}
           </p>
 
-          <div className={`${s.actions} ${s.reveal}`} style={{ "--i": 3 } as React.CSSProperties}>
-            <a href="#callback" className={`${s.btn} ${s.btnPrimary}`}>
+          {/* кнопки — как в варианте 2: 60px, скругление 16, квадрат-иконка слева, линия снизу при наведении */}
+          <div className={`${s.actions} ${s.reveal}`} style={{ "--i": 2 } as React.CSSProperties}>
+            <a href="#callback" className={`${s.cta} ${s.ctaPrimary}`}>
+              <span className={s.ctaChip}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path
+                    d="M5 4h3.5l1.8 4.4-2.2 1.4a11 11 0 0 0 6.1 6.1l1.4-2.2L20 15.5V19a1.5 1.5 0 0 1-1.6 1.5A16.5 16.5 0 0 1 3.5 5.6 1.5 1.5 0 0 1 5 4Z"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </span>
               Заказать обратный звонок
-              <svg className={s.btnArrow} width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
             </a>
-            <a href="https://ivs-corp.ru/services/" className={s.link}>
-              Все услуги <span className={s.chev}>›</span>
+            <a href="https://ivs-corp.ru/services/" className={`${s.cta} ${s.ctaSecondary}`}>
+              <span className={s.ctaChip}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M7 17 17 7M8 7h9v9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+              Все услуги
             </a>
           </div>
         </div>
 
         <ul className={s.stats} aria-label="ИВС в цифрах">
           {stats.map((st, i) => (
-            <li key={st.label} className={s.reveal} style={{ "--i": 4 + i } as React.CSSProperties}>
+            <li key={st.label} className={s.reveal} style={{ "--i": 3 + i } as React.CSSProperties}>
               <a href={statLinks[i]} className={s.glass}>
                 <span className={s.glassValue}>{st.value}</span>
                 <span className={s.glassLabel}>{st.label}</span>

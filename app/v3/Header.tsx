@@ -15,7 +15,7 @@ function Chevron() {
 }
 
 // Шапка варианта 3 — NavBar из ДС: плавающая «пилюля», на тёмном фоне — «жидкое стекло»
-// (material-glass, glass-edge, shadow-glass). Белый знак — готовый файл для тёмного фона.
+// (material-glass, glass-edge, shadow-glass). Знак — основной красный файл ivs-mark.svg.
 export function Header() {
   const [open, setOpen] = useState<string | null>(null);
   const [sheet, setSheet] = useState(false);
@@ -142,7 +142,7 @@ export function Header() {
     <header className={s.header} ref={root}>
       <div className={s.bar}>
         <a href="https://ivs-corp.ru/" className={s.logo} aria-label="ИВС-СЕТИ — на главную">
-          <img src="/ivs-mark-white.svg" width={40} height={40} alt="" />
+          <img src="/ivs-mark.svg" width={40} height={40} alt="" />
         </a>
 
         <nav className={s.nav} aria-label="Основное меню">
@@ -152,7 +152,7 @@ export function Header() {
         <a href={phone.href} className={s.phone}>
           {phone.label}
         </a>
-        <a href="#callback" className={`${s.btn} ${s.btnPrimary} ${s.btnSm} ${s.headerCta}`}>
+        <a href="#callback" className={`${s.btn} ${s.btnPrimary} ${s.headerCta}`}>
           Заказать звонок
         </a>
         <button
